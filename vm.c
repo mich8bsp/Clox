@@ -1,10 +1,12 @@
 #include "vm.h"
 #include <stdio.h>
 #include "debug.h"
+#include "memory.h"
 VM vm;
 
 static void resetStack()
 {
+    vm.stackSize = STACK_INITIAL_SIZE;
     vm.stackTop = vm.stack;
 }
 
@@ -19,6 +21,22 @@ void freeVM()
 
 void push(Value value)
 {
+    if((vm.stackTop - vm.stack) >= vm.stackSize){
+        int newStackSize = vm.stackSize * 2;
+        
+        if(vm.stackSize >= STACK_MAX){
+            //if we're at the limit of stack size - we can't grow it so we throw SO
+            printf("Stack overflow");
+            exit(1);
+        }
+        if(newStackSize > STACK_MAX){
+            //if current stack size is less then MAX but doubling it will make it larger than MAX, we grow it up to MAX
+            newStackSize = STACK_MAX;
+        }
+
+        GROW_ARRAY(Value, vm.stack, vm.stackSize, newStackSize);
+        vm.stackSize = newStackSize;
+    }
     *vm.stackTop = value;
     vm.stackTop++;
 }
