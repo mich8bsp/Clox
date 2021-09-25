@@ -3,6 +3,8 @@
 
 #include "chunk.h"
 #include "value.h"
+#include "common.h"
+#include <stdlib.h>
 
 #define STACK_INITIAL_SIZE 256
 #define STACK_MAX 2048
@@ -23,7 +25,7 @@ typedef enum {
 
 void initVM();
 void freeVM();
-InterpretResult interpret(Chunk* chunk);
+InterpretResult interpret(const char* source);
 
 //stack operations
 void push(Value value);
